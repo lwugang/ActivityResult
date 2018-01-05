@@ -70,3 +70,4 @@ ActivityResultManager.get()
       }
     },true);
 ```
+#### 简书博客地址 [https://www.jianshu.com/p/ca1573f7b35c]
