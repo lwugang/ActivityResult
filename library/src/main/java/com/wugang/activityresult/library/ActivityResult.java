@@ -179,16 +179,18 @@ public final class ActivityResult {
   }
 
   /**
-   * 已返回值方式打开
+   * 以返回值方式打开
    * @param activityResultListener 可以为 null,null表示不需要处理返回值
    */
   public void forResult(@Nullable ActivityResultListener activityResultListener) {
-    //绿色通道不走拦截器
-    resultFragment.setActivityResultListener(activityResultListener);
-    if (!greenChannel) {
-      execIntercepts();
-    } else {
-      startActivity();
+    if(Utils.isFastClick()){
+      //绿色通道不走拦截器
+      resultFragment.setActivityResultListener(activityResultListener);
+      if (!greenChannel) {
+        execIntercepts();
+      } else {
+        startActivity();
+      }
     }
   }
 
