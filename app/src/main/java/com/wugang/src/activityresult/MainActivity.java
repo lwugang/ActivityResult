@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
   public void test(View v){
     ActivityResult.of(this)
         .className(TestActivity.class)
+        .greenChannel()
         .options(ActivityOptionsCompat.makeScaleUpAnimation(v,(int)v.getX(),(int)v.getY(),
             v.getWidth()/2,v.getHeight()/2).toBundle())
         .intercept(new Intercept() {

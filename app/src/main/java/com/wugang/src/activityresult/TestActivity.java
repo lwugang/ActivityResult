@@ -11,6 +11,8 @@ public class TestActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     ((TextView)findViewById(R.id.test)).setText(getClass().getName());
+
+    startActivityForResult(new Intent(),1);
   }
 
   @Override public void onBackPressed() {
@@ -18,5 +20,9 @@ public class TestActivity extends AppCompatActivity {
     intent.putExtra("aaa","-------------TestActivity--------");
     setResult(RESULT_OK,intent);
     super.onBackPressed();
+  }
+
+  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
   }
 }
