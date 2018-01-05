@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -38,16 +39,28 @@ public class MainActivity extends AppCompatActivity {
         Log.e(TAG, "onIntercept2222222222: " );
         return false;
       }
-    });
+    },true);
   }
 
   public void test(View v){
     ActivityResult.of(this)
         .className(TestActivity.class)
-        .forResult(new ActivityResultListener() {
-          @Override public void onReceiveResult(int resultCode, Intent data) {
-            Log.e("------", "onReceiveResult: "+data.getStringExtra("aaa") );
+        .options(ActivityOptionsCompat.makeScaleUpAnimation(v,(int)v.getX(),(int)v.getY(),
+            v.getWidth()/2,v.getHeight()/2).toBundle())
+        .intercept(new Intercept() {
+          @Override public boolean onIntercept(Activity activity, ActivityResult activityResult) {
+            Log.e(TAG, "onIntercept: test" );
+            return false;
           }
-        });
+        }).forResult(new ActivityResultListener() {
+      @Override public void onReceiveResult(int resultCode, Intent data) {
+
+      }
+    });
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    ActivityResultManager.get().clearIntercept();
   }
 }

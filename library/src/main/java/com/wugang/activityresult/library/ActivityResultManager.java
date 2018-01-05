@@ -4,7 +4,7 @@ import android.app.Activity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ListIterator;
 
 /**
  * @author lwg
@@ -16,7 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public final class ActivityResultManager {
   private static ActivityResultManager INSTANCE = new ActivityResultManager();
 
-  private CopyOnWriteArrayList<InterceptEntity> interceptList = new CopyOnWriteArrayList<>();
+  private ArrayList<InterceptEntity> interceptList = new ArrayList<>();
 
   public static ActivityResultManager get() {
     return INSTANCE;
@@ -44,6 +44,13 @@ public final class ActivityResultManager {
   }
 
   /**
+   * 清楚所有拦截器
+   */
+  public void clearIntercept(){
+    interceptList.clear();
+  }
+
+  /**
    * 取消注册
    */
   public ActivityResultManager unRegisterIntercept(Intercept intercept) {
@@ -58,18 +65,19 @@ public final class ActivityResultManager {
     int i =
         Math.max(interceptList.indexOf(InterceptEntity.of(activityResult.currentIntercept, false)),
             0);
-    for (; i < interceptList.size(); i++) {
-      InterceptEntity entity = interceptList.get(i);
+    ListIterator<InterceptEntity> interceptEntityListIterator = interceptList.listIterator();
+    while (interceptEntityListIterator.hasNext()){
+      InterceptEntity entity = interceptEntityListIterator.next();
       if (list.isEmpty() || list.contains(entity.intercept.getClass().getName())) {
-        boolean isIntercept = entity.intercept.onIntercept(activity, activityResult);
         if (entity.removeUsed) {
           //使用后移除
-          interceptList.remove(entity);
+          interceptEntityListIterator.remove();
         }
+        boolean isIntercept = entity.intercept.onIntercept(activity, activityResult);
         if (isIntercept) {
-          if (interceptList.size() > (i + 1)) {
+          if(interceptEntityListIterator.hasNext()) {
             //记录下一个需要执行的拦截器
-            activityResult.currentIntercept = interceptList.get(i + 1).intercept;
+            activityResult.currentIntercept = interceptEntityListIterator.next().intercept;
           }
           return;
         }

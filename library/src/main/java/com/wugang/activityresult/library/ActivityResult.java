@@ -1,12 +1,15 @@
 package com.wugang.activityresult.library;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import java.io.Serializable;
 
 /**
@@ -37,6 +40,11 @@ public final class ActivityResult {
    */
   Class[] intercepts;
 
+  /**
+   * Transition 动画
+   */
+  Bundle bundle;
+
   public ActivityResult(Activity activity) {
     intentBuilder = IntentBuilder.builder(activity);
     resultFragment = getActivityResultFragment(activity);
@@ -62,9 +70,15 @@ public final class ActivityResult {
         .registerIntercept(intercept,true);
     return this;
   }
-
   /**
-   * 绿色通道，不走任何拦截器,在拦截器需要使用绿色通道，否则会造成死循环
+   * transition动画 {@link ActivityOptions#toBundle()}
+   */
+  public ActivityResult options(Bundle options) {
+    bundle = options;
+    return this;
+  }
+  /**
+   * 绿色通道，不走任何拦截器,在拦截器中使用ActivityResult跳转需要使用绿色通道，否则会造成死循环
    */
   public ActivityResult greenChannel() {
     greenChannel = true;
@@ -72,7 +86,7 @@ public final class ActivityResult {
   }
 
   /**
-   * 绿色通道，只执行指定拦截器,在拦截器需要使用绿色通道，否则会造成死循环
+   * 绿色通道，只执行指定拦截器,在拦截器中使用ActivityResult跳转需要使用绿色通道，否则会造成死循环
    */
   public ActivityResult greenChannel(Class<Intercept>... intercepts) {
     greenChannel = true;
@@ -164,7 +178,11 @@ public final class ActivityResult {
     return intentBuilder.build();
   }
 
-  public ActivityResult forResult(@NonNull ActivityResultListener activityResultListener) {
+  /**
+   * 已返回值方式打开
+   * @param activityResultListener 可以为 null,null表示不需要处理返回值
+   */
+  public void forResult(@Nullable ActivityResultListener activityResultListener) {
     //绿色通道不走拦截器
     resultFragment.setActivityResultListener(activityResultListener);
     if (!greenChannel) {
@@ -172,7 +190,6 @@ public final class ActivityResult {
     } else {
       startActivity();
     }
-    return this;
   }
 
   /**
@@ -187,7 +204,11 @@ public final class ActivityResult {
   }
 
   protected void startActivity() {
-    resultFragment.startActivityForResult(build(), hashCode());
+    if(Build.VERSION.SDK_INT >= 16) {
+      resultFragment.startActivityForResult(build(), 1, bundle);
+    } else {
+      resultFragment.startActivityForResult(build(), 1);
+    }
   }
 
   /**
