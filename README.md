@@ -8,7 +8,7 @@ allprojects {
 	}
 }
 dependencies {
-	compile 'com.github.lwugang:ActivityResult:ef8a6afcaf'
+	compile 'com.github.lwugang:ActivityResult:59b23e3682'
 }
 ```
 ## 大家都知道在一个APP中，Activity之间的数据交互是经常的，
