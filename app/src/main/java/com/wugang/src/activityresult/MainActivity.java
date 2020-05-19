@@ -8,9 +8,10 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import com.wugang.activityresult.library.ActivityResult;
-import com.wugang.activityresult.library.ActivityResultListener;
-import com.wugang.activityresult.library.ActivityResultManager;
+import com.wugang.activityresult.library.AResult;
+import com.wugang.activityresult.library.AResultListener;
+import com.wugang.activityresult.library.AResultManager;
+import com.wugang.activityresult.library.BundleCompat;
 import com.wugang.activityresult.library.Intercept;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,9 +21,10 @@ public class MainActivity extends AppCompatActivity {
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    ActivityResultManager.get()
+
+    AResultManager.get()
         .registerIntercept(new Intercept() {
-          @Override public boolean onIntercept(Activity activity,final ActivityResult activityResult) {
+          @Override public boolean onIntercept(Activity activity,final AResult activityResult) {
             Log.e(TAG, "onIntercept: " );
             new Thread(){
               @Override public void run() {
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
           }
         },true).registerIntercept(new Intercept() {
-      @Override public boolean onIntercept(Activity activity, ActivityResult activityResult) {
+      @Override public boolean onIntercept(Activity activity, AResult activityResult) {
         //可以判断是否登录成功，返回对应的值
         Log.e(TAG, "onIntercept2222222222: " );
         return false;
@@ -43,17 +45,17 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void test(View v){
-    ActivityResult.of(this)
+    AResult.of(this)
         .className(TestActivity.class)
         .greenChannel()
         .options(ActivityOptionsCompat.makeScaleUpAnimation(v,(int)v.getX(),(int)v.getY(),
             v.getWidth()/2,v.getHeight()/2).toBundle())
         .intercept(new Intercept() {
-          @Override public boolean onIntercept(Activity activity, ActivityResult activityResult) {
+          @Override public boolean onIntercept(Activity activity, AResult activityResult) {
             Log.e(TAG, "onIntercept: test" );
             return false;
           }
-        }).forResult(new ActivityResultListener() {
+        }).forResult(new AResultListener() {
       @Override public void onReceiveResult(int resultCode, Intent data) {
 
       }
@@ -62,6 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
   @Override protected void onDestroy() {
     super.onDestroy();
-    ActivityResultManager.get().clearIntercept();
+    AResultManager.get().clearIntercept();
   }
 }

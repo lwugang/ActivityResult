@@ -9,7 +9,7 @@ import android.content.Intent;
  * @desc Activity Result 结果回调
  */
 
-public interface ActivityResultListener {
+public interface AResultListener {
   /**
    * 接收结果处理
    * @param resultCode

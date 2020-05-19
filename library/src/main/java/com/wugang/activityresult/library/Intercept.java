@@ -16,5 +16,5 @@ public interface Intercept {
    * @param activityResult
    * @return 是否拦截  true 表示拦截不继续执行
    */
-  boolean onIntercept(Activity activity, ActivityResult activityResult);
+  boolean onIntercept(Activity activity, AResult activityResult);
 }
