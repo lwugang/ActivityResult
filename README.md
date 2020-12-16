@@ -8,11 +8,11 @@ allprojects {
 	}
 }
 dependencies {
-	compile 'com.github.lwugang:ActivityResult:v2.0.0'
+	compile 'com.github.lwugang:ActivityResult:v2.0.1'
 }
 ```
 ## 大家都知道在一个APP中，Activity之间的数据交互是经常的，
-####传统方式获取Activity返回值,这种方式需要操作多个方法，可读性很差
+#### 传统方式获取Activity返回值,这种方式需要操作多个方法，可读性很差
 ```java
  startActivityForResult(new Intent(),1);
 ```
