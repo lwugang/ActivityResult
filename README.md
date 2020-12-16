@@ -22,52 +22,23 @@ dependencies {
     //获取数据
   }
 ```
-####ActivityResult方式 只需关注一个方法，实现方法的链式调用，可读性强，对代码无侵入，只需修改打开方式，另一个界面的逻辑无需特殊处理
+#### ActivityResult方式 只需关注一个方法，实现方法的链式调用，可读性强，对代码无侵入，只需修改打开方式，另一个界面的逻辑无需特殊处理
 ```java
 AResult.of(this)
         .className(TestActivity.class)//目标Activity类名
-        //绿色通道，不走任何拦截器，直接打开目标
-        .greenChannel()
         //transition 动画
         .options(ActivityOptionsCompat.makeScaleUpAnimation(v,(int)v.getX(),(int)v.getY(),
-            v.getWidth()/2,v.getHeight()/2).toBundle())
-        //拦截器，在startActivity之前执行
-        .intercept(new Intercept() {
-          @Override public boolean onIntercept(Activity activity, AResult aResult) {
-            Log.e(TAG, "onIntercept: test" );
-            //拦截器，return true 表示拦截，之后的拦截器都不会执行
-            //aResult.onContinue(); 继续执行之后的逻辑
-            return false;
-          }
-        }).forResult(new AResultListener() {
-      @Override public void onReceiveResult(int resultCode, Intent data) {
-          // 结果处理，也就是onActivityResult方法一样
+            v.getWidth()/2,v.getHeight()/2).toBundle()).forResult(new AResultListener() {
+      @Override public void onReceiveResult(Intent data) {
+          // 结果处理，也就是onActivityResult方法一样,只有当 setResult(Activity.RESULT_OK)才会执行
       }
     });
 ```
-####Application 中提前加入拦截器(可选)
-```java
-//注册拦截器
-AResultManager.get()
-        .registerIntercept(new Intercept() {
-          @Override public boolean onIntercept(Activity activity,final AResult aResult) {
-            Log.e(TAG, "onIntercept: " );
-            new Thread(){
-              @Override public void run() {
-                super.run();
-                SystemClock.sleep(2000);
-                aResult.onContinue();
-              }
-            }.start();
-            return true;
-          }
-        // true 表示使用一次之后就自动移除，下一次不会在执行此拦截器
-        },true).registerIntercept(new Intercept() {
-      @Override public boolean onIntercept(Activity activity, AResult aResult) {
-        //可以判断是否登录成功，返回对应的值
-        Log.e(TAG, "onIntercept2222222222: " );
-        return false;
-      }
-    },true);
-```
+
+#### 更新记录
+- 1.v2.0.1
+    - 1.1 移除拦截器概念，简化操作
+    - 1.2 增强IntentBuilder实现
+    - 1.3 新增BundleCompat 快速创建Bundle
+
 #### 简书博客地址 [https://www.jianshu.com/p/ca1573f7b35c]
