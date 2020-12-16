@@ -12,9 +12,38 @@ import java.io.Serializable;
  * @email 13480020053@163.com
  */
 public class BundleCompat {
-    private IntentBuilder builder = IntentBuilder.builder(null);
+    private IntentBuilder builder = IntentBuilder.of();
 
-    public static BundleCompat with() {
+    private BundleCompat(Bundle bundle) {
+        builder.params(bundle);
+    }
+
+    private BundleCompat() {
+    }
+
+    public static BundleCompat of(Bundle bundle) {
+        return new BundleCompat(bundle);
+    }
+
+    public static BundleCompat of(String key, String value) {
+        BundleCompat bundleCompat = new BundleCompat();
+        bundleCompat.put(key, value);
+        return bundleCompat;
+    }
+
+    public static BundleCompat of(String key, int value) {
+        BundleCompat bundleCompat = new BundleCompat();
+        bundleCompat.put(key, value);
+        return bundleCompat;
+    }
+
+    public static BundleCompat of(String key, boolean value) {
+        BundleCompat bundleCompat = new BundleCompat();
+        bundleCompat.put(key, value);
+        return bundleCompat;
+    }
+
+    public static BundleCompat of() {
         return new BundleCompat();
     }
 

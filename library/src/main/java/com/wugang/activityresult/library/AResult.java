@@ -27,27 +27,12 @@ public final class AResult {
     private IntentBuilder intentBuilder;
 
     /**
-     * 绿色通道
-     */
-    boolean greenChannel = false;
-
-    /**
-     * 当前拦截停止的的拦截器,继续执行时从此拦截器执行
-     */
-    Intercept currentIntercept;
-
-    /**
-     * 需要执行的拦截器
-     */
-    Class[] intercepts;
-
-    /**
      * Transition 动画
      */
     Bundle bundle;
 
     public AResult(Activity activity) {
-        intentBuilder = IntentBuilder.builder(activity);
+        intentBuilder = IntentBuilder.of(activity);
         resultFragment = getActivityResultFragment(activity);
     }
 
@@ -59,41 +44,11 @@ public final class AResult {
         return new AResult(fragment.getActivity());
     }
 
-    public Intercept getCurrentIntercept() {
-        return currentIntercept;
-    }
-
-    /**
-     * 拦截器，一次性的，使用后会自动移除
-     */
-    public AResult intercept(Intercept intercept) {
-        AResultManager.get()
-                .registerIntercept(intercept, true);
-        return this;
-    }
-
     /**
      * transition动画 {@link ActivityOptions#toBundle()}
      */
     public AResult options(Bundle options) {
         bundle = options;
-        return this;
-    }
-
-    /**
-     * 绿色通道，不走任何拦截器,在拦截器中使用ActivityResult跳转需要使用绿色通道，否则会造成死循环
-     */
-    public AResult greenChannel() {
-        greenChannel = true;
-        return this;
-    }
-
-    /**
-     * 绿色通道，只执行指定拦截器,在拦截器中使用ActivityResult跳转需要使用绿色通道，否则会造成死循环
-     */
-    public AResult greenChannel(Class<Intercept>... intercepts) {
-        greenChannel = true;
-        this.intercepts = intercepts;
         return this;
     }
 
@@ -187,24 +142,8 @@ public final class AResult {
      * @param activityResultListener 可以为 null,null表示不需要处理返回值
      */
     public void forResult(@Nullable AResultListener activityResultListener) {
-        //绿色通道不走拦截器
         resultFragment.setActivityResultListener(activityResultListener);
-        if (!greenChannel) {
-            execIntercepts();
-        } else {
-            startActivity();
-        }
-    }
-
-    /**
-     * 继续跳转，恢复跳转逻辑
-     */
-    public void onContinue() {
-        execIntercepts();
-    }
-
-    private void execIntercepts() {
-        AResultManager.get().intercept(resultFragment.getActivity(), this, intercepts);
+        startActivity();
     }
 
     protected void startActivity() {
@@ -213,6 +152,26 @@ public final class AResult {
         } else {
             resultFragment.startActivityForResult(build(), 1);
         }
+    }
+
+    /**
+     * 设置返回值并且关闭activity
+     *
+     * @param intent
+     */
+    public static void setResultAndFinish(Activity activity, Intent intent) {
+        activity.setResult(Activity.RESULT_OK, intent);
+        activity.finish();
+    }
+
+    /**
+     * 设置返回值并且关闭activity
+     *
+     * @param builder
+     */
+    public static void setResultAndFinish(Activity activity, IntentBuilder builder) {
+        activity.setResult(Activity.RESULT_OK, builder.build());
+        activity.finish();
     }
 
     /**

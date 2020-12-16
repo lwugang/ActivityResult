@@ -25,7 +25,8 @@ public class AResultFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (activityResultListener != null && resultCode == Activity.RESULT_OK)
-            activityResultListener.onReceiveResult(resultCode, data);
+        if (activityResultListener != null && resultCode == Activity.RESULT_OK) {
+            activityResultListener.onReceiveResult(data);
+        }
     }
 }

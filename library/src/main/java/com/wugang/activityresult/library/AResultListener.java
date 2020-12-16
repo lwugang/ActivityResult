@@ -10,10 +10,10 @@ import android.content.Intent;
  */
 
 public interface AResultListener {
-  /**
-   * 接收结果处理
-   * @param resultCode
-   * @param data 被打开Activity返回的结果数据
-   */
-  void onReceiveResult(int resultCode, Intent data);
+    /**
+     * 接收结果处理
+     *
+     * @param data 被打开Activity返回的结果数据
+     */
+    void onReceiveResult(Intent data);
 }
